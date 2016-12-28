@@ -152,19 +152,32 @@ MainMenu.prototype = {
      * Create board of records
      */
     createRecordBoard: function () {
-        this.mainButtons.setAll('inputEnabled', false);
-        this.game.server.messages.getRecords((records) => {
-            let recordsGroup = game.add.responsiveGroup()
-            let prevRecord
-            for (let i = 0; 10 < records.length ? i < 10 : i < records.length; i++) {
-                let record = this.game.add.responsiveText(prevRecord ? prevRecord.height * i : 0, 0,
-                    records[i].name + ':' + records[i].bestScore, {fill: "#ffffff"}, Fabrique.PinnedPosition.topLeft
-                );
-                recordsGroup.add(record)
-            }
-            recordsGroup.setPortraitScaling(80, true, false, Fabrique.PinnedPosition.topLeft, this.game.width * 0.1)
-            this.game.createBtnBack('MainMenu')
-        })
+
+        if (game.server.connected) {
+
+            this.mainButtons.setAll('inputEnabled', false);
+            this.game.server.messages.getRecords((records) => {
+                if(records){
+                    let recordsGroup = game.add.responsiveGroup()
+                    let prevRecord
+                    for (let i = 0; 10 < records.length ? i < 10 : i < records.length; i++) {
+                        let record = this.game.add.responsiveText(prevRecord ? prevRecord.height * i : 0, 0,
+                            records[i].name + ':' + records[i].bestScore, {fill: "#ffffff"}, Fabrique.PinnedPosition.topLeft
+                        );
+                        recordsGroup.add(record)
+                    }
+                    recordsGroup.setPortraitScaling(80, true, false, Fabrique.PinnedPosition.topLeft, this.game.width * 0.1)
+                }
+            })
+        }
+        else {
+            let errorMsg = game.add.responsiveText(0, 0,
+                'нет соединения'
+            );
+            errorMsg.anchor.set(0.5, 1)
+            errorMsg.setPortraitScaling(50, true, true, Fabrique.PinnedPosition.bottomCenter, 0, 0);
+        }
+        this.game.createBtnBack('MainMenu')
 
     }
 };
