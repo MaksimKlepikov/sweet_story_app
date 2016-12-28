@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>states/Boot.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GameField.html">GameField</a><ul class='methods'><li data-type='method'><a href="GameField.html#.getTilePos">getTilePos</a></li><li data-type='method'><a href="GameField.html#addTile">addTile</a></li><li data-type='method'><a href="GameField.html#applyBonus">applyBonus</a></li><li data-type='method'><a href="GameField.html#checkMatch">checkMatch</a></li><li data-type='method'><a href="GameField.html#createScore">createScore</a></li><li data-type='method'><a href="GameField.html#createSignals">createSignals</a></li><li data-type='method'><a href="GameField.html#fillTile">fillTile</a></li><li data-type='method'><a href="GameField.html#getMatches">getMatches</a></li><li data-type='method'><a href="GameField.html#incrementScore">incrementScore</a></li><li data-type='method'><a href="GameField.html#initTiles">initTiles</a></li><li data-type='method'><a href="GameField.html#lookForPossibles">lookForPossibles</a></li><li data-type='method'><a href="GameField.html#matchPattern">matchPattern</a></li><li data-type='method'><a href="GameField.html#matchType">matchType</a></li><li data-type='method'><a href="GameField.html#removeTileGroup">removeTileGroup</a></li><li data-type='method'><a href="GameField.html#resetTile">resetTile</a></li><li data-type='method'><a href="GameField.html#swapTiles">swapTiles</a></li><li data-type='method'><a href="GameField.html#tileDown">tileDown</a></li><li data-type='method'><a href="GameField.html#tileUp">tileUp</a></li><li data-type='method'><a href="GameField.html#update">update</a></li></ul></li><li><a href="Server.html">Server</a><ul class='methods'><li data-type='method'><a href="Server.html#bindMessagesHandler">bindMessagesHandler</a></li><li data-type='method'><a href="Server.html#bindMessagesSenders">bindMessagesSenders</a></li><li data-type='method'><a href="Server.html#connect">connect</a></li></ul></li><li><a href="UserController.html">UserController</a><ul class='methods'><li data-type='method'><a href="UserController.html#doneTile">doneTile</a></li><li data-type='method'><a href="UserController.html#getProgressByHillName">getProgressByHillName</a></li><li data-type='method'><a href="UserController.html#incrementLevel">incrementLevel</a></li><li data-type='method'><a href="UserController.html#incrementProgressOnHill">incrementProgressOnHill</a></li><li data-type='method'><a href="UserController.html#syncUser">syncUser</a></li><li data-type='method'><a href="UserController.html#updateBestScoreInStorage">updateBestScoreInStorage</a></li><li data-type='method'><a href="UserController.html#updateDateInStorage">updateDateInStorage</a></li><li data-type='method'><a href="UserController.html#updateProgressInStorage">updateProgressInStorage</a></li></ul></li><li><a href="UserModel.html">UserModel</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Boot">Boot</a></li><li><a href="global.html#Game">Game</a></li><li><a href="global.html#InfinityGame">InfinityGame</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Preload">Preload</a></li><li><a href="global.html#SelectLevel">SelectLevel</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">states/Boot.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Created by kevrat on 08.10.2016.
+ */
+var Boot = function (game) {
+};
+Boot.prototype = {
+    /**
+     * Preload State
+     */
+    preload: function () {
+        game.plugins.add(Fabrique.Plugins.Responsiveness);
+        this.loadScripts();
+        this.loadJSONs()
+    },
+
+    /**
+     * Create State
+     */
+    create: function () {
+        game.input.touch.preventDefault = false;
+        this.addGameStates();
+        this.scaleStage();
+        if (typeof io != 'undefined') {
+            this.game.server = new Server(this.game, 'http://sweetstory.herokuapp.com', io)
+        }
+        else {
+            this.game.server = new Server(this.game, 'http://sweetstory.herokuapp.com')
+        }
+
+        game.state.start('Preload');
+    },
+
+    /**
+     * Add loaded states to game
+     */
+    addGameStates: function () {
+        game.state.add('MainMenu', MainMenu);
+        game.state.add('Login', Login);
+        game.state.add('SelectLevel', SelectLevel);
+        game.state.add('Preload', Preload);
+        game.state.add('InfinityGame', InfinityGame);
+        game.state.add('Game', Game);
+    },
+
+    /**
+     * Load scripts
+     */
+    loadScripts: function () {
+        game.load.script('Server', 'js/game/Server.js');
+        game.load.script('GameField', 'js/game/GameField.js');
+        game.load.script('UserController', 'js/game/controllers/UserController.js');
+        game.load.script('UserModel', 'js/game/models/UserModel.js');
+        this.loadStatesScripts()
+    },
+
+    /**
+     * Load states scripts
+     */
+    loadStatesScripts: function () {
+        let statesScripts = [
+            {name: 'MainMenu', uri: 'js/game/states/MainMenu.js'},
+            {name: 'Preload', uri: 'js/game/states/Preload.js'},
+            {name: 'Login', uri: 'js/game/states/Login.js'},
+            {name: 'InfinityGame', uri: 'js/game/states/InfinityGame.js'},
+            {name: 'SelectLevel', uri: 'js/game/states/SelectLevel.js'},
+            {name: 'Game', uri: 'js/game/states/Game.js'},
+        ];
+        for (let i = 0; i &lt; statesScripts.length; i++) {
+            game.load.script(statesScripts[i].name, statesScripts[i].uri);
+        }
+    },
+
+    /**
+     * Load JSON files
+     */
+    loadJSONs: function () {
+        game.load.json('hills', 'hills/hills.json');
+    },
+
+    /**
+     * Scale game
+     */
+    scaleStage: function () {
+        if (this.game.device.desktop) {
+        }
+        else {
+            this.scale.scaleMode = Phaser.ScaleManager.NO_BORDER;
+            this.scale.forceOrientation(true, false);
+            this.scale.refresh();
+        }
+
+        this.scale.minWidth = BasicGame.gameWidth / 2;
+        this.scale.minHeight = BasicGame.gameHeight / 2;
+        this.scale.maxWidth = BasicGame.gameWidth;
+        this.scale.maxHeight = BasicGame.gameHeight;
+        this.scale.pageAlignHorizontally = true;
+        this.scale.pageAlignVertically = true;
+        this.scale.refresh();
+
+        if (this.scale.scaleMode == Phaser.ScaleManager.NO_BORDER) {
+            BasicGame.viewX = (this.scale.width / 2 - window.innerWidth / 2) * this.scale.scaleFactor.x;
+            BasicGame.viewY = (this.scale.height / 2 - window.innerHeight / 2 - 1) * this.scale.scaleFactor.y;
+            BasicGame.viewWidth = BasicGame.gameWidth - BasicGame.viewX;
+            BasicGame.viewHeight = BasicGame.gameHeight - BasicGame.viewY;
+        } else {
+            BasicGame.viewX = 0;
+            BasicGame.viewY = 0;
+            BasicGame.viewWidth = BasicGame.gameWidth;
+            BasicGame.viewHeight = BasicGame.gameHeight;
+        }
+    },
+
+};
+var BasicGame = {};
+BasicGame.screen = "small";
+BasicGame.srx = Math.max(window.innerWidth, window.innerHeight);
+BasicGame.sry = Math.min(window.innerWidth, window.innerHeight);
+
+BasicGame.logicWidth = 480;
+BasicGame.logicHeight = 320;
+var r = BasicGame.logicWidth / BasicGame.logicHeight;
+if (BasicGame.srx >= 360) {
+    BasicGame.screen = "small";
+    BasicGame.gameWidth = 360;
+}
+if (BasicGame.srx >= 480) {
+    BasicGame.screen = "normal";
+    BasicGame.gameWidth = 480;
+}
+if (BasicGame.srx >= 720) {
+    BasicGame.screen = "large";
+    BasicGame.gameWidth = 720;
+}
+if (BasicGame.srx >= 960) {
+    BasicGame.screen = "xlarge";
+    BasicGame.gameWidth = 960;
+}
+if (BasicGame.srx >= 1440) {
+    BasicGame.screen = "xxlarge";
+    BasicGame.gameWidth = 1440;
+}
+device = null;
+
+
+BasicGame.gameHeight = BasicGame.gameWidth / r;
+BasicGame.screen = "normal";
+BasicGame.convertWidth = function (value) {
+    return value / BasicGame.logicWidth * BasicGame.gameWidth;
+};
+BasicGame.convertHeight = function (value) {
+    return value / BasicGame.logicHeight * BasicGame.gameHeight;
+};
+
+var game = new Phaser.Game('100%', '100%', Phaser.AUTO, 'sweetstory', null, true);
+game.user = {};
+if (game.device.desktop) {
+    BasicGame.screen = "large";
+    BasicGame.gameWidth = 720;
+}
+BasicGame.gameHeight = BasicGame.gameWidth / r;
+game.width = BasicGame.gameWidth
+game.height = BasicGame.gameHeight</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Dec 27 2016 16:44:29 GMT+0300 (RTZ 2 (зима)) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
