@@ -1,0 +1,23 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc"]
+  },
+  "opts": {
+    "destination": "./docs/",
+    "template": "node_modules/minami"
+  },
+  "source": {
+    "include": [
+      "js/game",
+      "js/game/controllers",
+      "js/game/models",
+      "js/game/states",
+      "package.json"],
+    "exclude":[
+      "js/indexBrowser.js"
+    ],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  }
+}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>states/MainMenu.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GameField.html">GameField</a><ul class='methods'><li data-type='method'><a href="GameField.html#.getTilePos">getTilePos</a></li><li data-type='method'><a href="GameField.html#addTile">addTile</a></li><li data-type='method'><a href="GameField.html#applyBonus">applyBonus</a></li><li data-type='method'><a href="GameField.html#checkMatch">checkMatch</a></li><li data-type='method'><a href="GameField.html#createScore">createScore</a></li><li data-type='method'><a href="GameField.html#createSignals">createSignals</a></li><li data-type='method'><a href="GameField.html#fillTile">fillTile</a></li><li data-type='method'><a href="GameField.html#getMatches">getMatches</a></li><li data-type='method'><a href="GameField.html#incrementScore">incrementScore</a></li><li data-type='method'><a href="GameField.html#initTiles">initTiles</a></li><li data-type='method'><a href="GameField.html#lookForPossibles">lookForPossibles</a></li><li data-type='method'><a href="GameField.html#matchPattern">matchPattern</a></li><li data-type='method'><a href="GameField.html#matchType">matchType</a></li><li data-type='method'><a href="GameField.html#removeTileGroup">removeTileGroup</a></li><li data-type='method'><a href="GameField.html#resetTile">resetTile</a></li><li data-type='method'><a href="GameField.html#swapTiles">swapTiles</a></li><li data-type='method'><a href="GameField.html#tileDown">tileDown</a></li><li data-type='method'><a href="GameField.html#tileUp">tileUp</a></li><li data-type='method'><a href="GameField.html#update">update</a></li></ul></li><li><a href="Server.html">Server</a><ul class='methods'><li data-type='method'><a href="Server.html#bindMessagesHandler">bindMessagesHandler</a></li><li data-type='method'><a href="Server.html#bindMessagesSenders">bindMessagesSenders</a></li><li data-type='method'><a href="Server.html#connect">connect</a></li></ul></li><li><a href="UserController.html">UserController</a><ul class='methods'><li data-type='method'><a href="UserController.html#doneTile">doneTile</a></li><li data-type='method'><a href="UserController.html#getProgressByHillName">getProgressByHillName</a></li><li data-type='method'><a href="UserController.html#incrementLevel">incrementLevel</a></li><li data-type='method'><a href="UserController.html#incrementProgressOnHill">incrementProgressOnHill</a></li><li data-type='method'><a href="UserController.html#syncUser">syncUser</a></li><li data-type='method'><a href="UserController.html#updateBestScoreInStorage">updateBestScoreInStorage</a></li><li data-type='method'><a href="UserController.html#updateDateInStorage">updateDateInStorage</a></li><li data-type='method'><a href="UserController.html#updateProgressInStorage">updateProgressInStorage</a></li></ul></li><li><a href="UserModel.html">UserModel</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Boot">Boot</a></li><li><a href="global.html#Game">Game</a></li><li><a href="global.html#InfinityGame">InfinityGame</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Preload">Preload</a></li><li><a href="global.html#SelectLevel">SelectLevel</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">states/MainMenu.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Create and return header
+ * @param y - y coord on screen
+ * @return {Fabrique.ResponsiveGroup}
+ */
+
+
+game.createHeader = function (y) {
+    let headerGroup = game.add.responsiveGroup()
+
+    let header = game.add.responsiveSprite(0, 0, 'main-header', null, Fabrique.PinnedPosition.topCenter);
+    header.anchor.set(0.5, 0)
+    header.setPortraitScaling(200, true, true, Fabrique.PinnedPosition.topCenter);
+
+    let headerTail = game.add.graphics(0, 0);
+    headerTail.beginFill(0xFEAA98);
+    headerTail.drawRect(0, -game.height + headerTail.height, game.width, game.height);
+    headerTail.endFill();
+
+    headerGroup.add(header)
+    headerGroup.add(headerTail)
+    headerGroup.setPinned(Fabrique.PinnedPosition.topLeft, 0, y)
+    game.add.tween(headerGroup).from({y: -header.height}, 500, Phaser.Easing.Back.Out, true)//.onComplete.add(callback)
+    return headerGroup;
+
+};
+
+/**
+ * Create and return button with text
+ * @param text - text on button
+ * @param key - key of button image
+ * @param pin - pin on screen
+ * @param callback - callback function
+ * @param percentageSprite - size in percentage of button image relative screen
+ * @param percentageText - size text in percentage relative button
+ * @param x - x coord on screen
+ * @param y - y coord on screen
+ * @returns {Fabrique.ResponsiveGroup} - array of button and text
+ */
+game.createBtnLabel = function (text, key, pin, callback, percentageSprite, percentageText = 100, x = 0, y = 0) {
+    let btnGroup = game.add.responsiveGroup();
+    let btnSprite = game.add.responsiveButton(0, 0, key, callback, this)
+    btnSprite.anchor.set(0.5)
+    let style = {font: btnSprite.height / 2 + "px VAG World", fill: "#8a5746", align: 'center'};
+    let btnLabel = game.add.responsiveText(0, 0, text, style)
+    btnLabel.setPortraitScaling(percentageText, true, false)
+    btnLabel.anchor.set(0.5)
+    btnGroup.add(btnSprite)
+    btnGroup.add(btnLabel)
+    btnGroup.setPortraitScaling(percentageSprite, true, false, pin, x, y)
+    return btnGroup
+};
+
+/**
+ * Create and return button, what start state
+ * @param stateName - name of start state
+ * @returns {Fabrique.ResponsiveButton} - button
+ */
+game.createBtnBack = function (stateName) {
+    let btnBackToMenu = game.add.responsiveButton(0, 0, 'main-menu', () => game.state.start(stateName), this)
+    btnBackToMenu.setPortraitScaling(10, true, true, Fabrique.PinnedPosition.bottomLeft)
+    btnBackToMenu.anchor.set(0, 1)
+    return btnBackToMenu
+};
+
+var MainMenu = function () {
+};
+MainMenu.prototype = {
+    /**
+     * Create State
+     */
+    create: function () {
+        this.signals = {}
+        this.signals.startInfinityGame = new Phaser.Signal();
+        this.signals.startSelectLevel = new Phaser.Signal();
+        this.signals.showRecordBoard = new Phaser.Signal();
+        this.signals.startSelectLevel.add(() => {
+            this.expandHeader(() => {
+                game.state.start('SelectLevel')
+            })
+        });
+        this.signals.showRecordBoard.add(() => {
+            this.expandHeader(() => {
+                this.createRecordBoard()
+            })
+        });
+        this.signals.startInfinityGame.add(() => {
+            this.expandHeader(() => {
+                game.state.start('InfinityGame')
+            })
+        });
+        this.createBg();
+        this.createBtns();
+        this.header = this.game.createHeader(0)
+
+    },
+
+    /**
+     * Start header expand animation
+     * @param callback
+     */
+    expandHeader: function (callback) {
+        this.game.add.tween(this.header).to({y: this.game.height}, 500, Phaser.Easing.Back.In, true).onComplete.add(callback)
+    },
+
+    /**
+     * Start reset header animation
+     * @param callback
+     */
+    resetHeader: function (callback) {
+        this.game.add.tween(this.header).to({y: 0}, 500, Phaser.Easing.Back.In, true).onComplete.add(callback)
+    },
+
+    /**
+     * Create buttons
+     */
+    createBtns: function () {
+        let btnSelectLevel = game.createBtnLabel('Гора сладостей', 'main-button',
+            Fabrique.PinnedPosition.middleCenter,
+            () => {
+                this.signals.startSelectLevel.dispatch()
+            }, 70)
+
+        let btnInfinityGame = game.createBtnLabel('Игра на рекорд', 'main-button',
+            Fabrique.PinnedPosition.middleCenter,
+            () => {
+                this.signals.startInfinityGame.dispatch()
+            }, 70, 100, 0, btnSelectLevel.height * 3)
+
+        let btnShowRecordBoard = game.createBtnLabel('Рекорды', 'main-button',
+            Fabrique.PinnedPosition.middleCenter,
+            () => {
+                this.signals.showRecordBoard.dispatch()
+            }, 70, 70, 0, btnSelectLevel.height * 6)
+        this.mainButtons = game.add.responsiveGroup()
+        this.mainButtons.add(btnSelectLevel)
+        this.mainButtons.add(btnInfinityGame)
+        this.mainButtons.add(btnShowRecordBoard)
+
+    },
+
+    /**
+     * Create background
+     */
+    createBg: function () {
+        let bg = this.game.add.responsiveSprite(0, 0, 'main-bg', null, Fabrique.PinnedPosition.middleCenter);
+        bg.anchor.set(0.5)
+        bg.setPortraitScaling(100, true, true, Fabrique.PinnedPosition.middleCenter);
+    },
+
+    /**
+     * Create board of records
+     */
+    createRecordBoard: function () {
+        this.mainButtons.setAll('inputEnabled', false);
+        this.game.server.messages.getRecords((records) => {
+            let recordsGroup = game.add.responsiveGroup()
+            let prevRecord
+            for (let i = 0; 10 &lt; records.length ? i &lt; 10 : i &lt; records.length; i++) {
+                let record = this.game.add.responsiveText(prevRecord ? prevRecord.height * i : 0, 0,
+                    records[i].name + ':' + records[i].bestScore, {fill: "#ffffff"}, Fabrique.PinnedPosition.topLeft
+                );
+                recordsGroup.add(record)
+            }
+            recordsGroup.setPortraitScaling(80, true, false, Fabrique.PinnedPosition.topLeft, this.game.width * 0.1)
+            this.game.createBtnBack('MainMenu')
+        })
+
+    }
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Dec 27 2016 16:44:29 GMT+0300 (RTZ 2 (зима)) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
