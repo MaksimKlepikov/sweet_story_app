@@ -139,9 +139,10 @@ class GameField {
             for (let j = 0; j < this.tileGrid.length; j++) {
                 tile = this.addTile(i, j, this.tileSizeAbsolute);
                 this.tileGrid[i][j] = tile;
-                while (this.getMatches(this.tileGrid).length > 0) {
-                    this.tileGrid[i][j].frameName = this.tileTypes[this.random.integerInRange(0, this.tileTypes.length - 1)];
-                    this.tileGrid[i][j].tileType = this.tileGrid[i][j].frameName
+                while (this.getMatches(this.tileGrid).length > 0) {//пока есть совпадения
+                    this.signals.removeTile.dispatch(this.tileGrid[i][j], true);
+                    this.tileGrid[i][j] = this.addTile(i, j, this.tileSizeAbsolute, this.tileTypes[this.random.integerInRange(0, this.tileTypes.length - 1)]);
+
                 }
             }
         }
@@ -154,9 +155,14 @@ class GameField {
      * @param tileSize - size of tile
      * @returns {tile}
      */
-    addTile(i, j, tileSize) {
+    addTile(i, j, tileSize, tileType) {
 
         let tileIcon = this.tileTypes[this.random.integerInRange(0, this.tileTypes.length - 1)];
+
+        if(tileType){
+            tileIcon = tileType
+        }
+
         let bonusChance = this.random.integerInRange(0, 100)
         let bonusType = null;
         let bonusIcon = null;
@@ -189,7 +195,12 @@ class GameField {
 
         const gameField = this;
 
-        this.signals.removeTile.add(function (tile) {
+        /**
+         * remove tile from tiles group
+         * @param tile - ref to tile
+         * @param isSilent - if true don't increment score
+         */
+        this.signals.removeTile.add(function (tile, isSilent = false) {
             if (tile.world.x === this.world.x && tile.world.y === this.world.y) {
                 //Find where this tile lives in the theoretical grid
                 let tilePos = GameField.getTilePos(gameField.tileGrid, tile)
@@ -200,7 +211,9 @@ class GameField {
                 gameField.tiles.remove(tile);
 
                 //Increase the users score
-                gameField.incrementScore();
+                if(!isSilent){
+                    gameField.incrementScore();
+                }
 
                 //Remove the tile from the theoretical grid
                 if (tilePos.i != -1 && tilePos.j != -1) {
