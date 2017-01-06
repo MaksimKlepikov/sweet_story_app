@@ -97,7 +97,7 @@ SelectLevel.prototype = {
             hill.x += hill.width * 1.5 * i
             this.hills.add(hill)
             let btnSelectHill = game.add.button(0, hill.bottom, 'main-play')
-            if (doneTiles < hillsJSON[i].items.length && this.game.userController.userInStorage.level >= i) {
+            if (doneTiles < hillsJSON[i].items.length && this.game.userController.userInStorage.level >= i-1) {
                 btnSelectHill.onInputDown.add(() => this.signals.startLevel.dispatch(hillsJSON[i]), this);
             }
             else {
