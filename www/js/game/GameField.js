@@ -210,16 +210,17 @@ class GameField {
                 //Remove the tile from the screen
                 gameField.tiles.remove(tile);
 
-                //Increase the users score
-                if(!isSilent){
-                    gameField.incrementScore();
-                }
 
                 //Remove the tile from the theoretical grid
                 if (tilePos.i != -1 && tilePos.j != -1) {
                     gameField.tileGrid[tilePos.i][tilePos.j] = null;
                     this.i = -1
                     this.j = -1
+
+                    //Increase the users score
+                    if(!isSilent){
+                        gameField.incrementScore();
+                    }
                 }
 
             }
