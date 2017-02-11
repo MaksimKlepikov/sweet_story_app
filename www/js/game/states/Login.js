@@ -1,20 +1,18 @@
 /**
  * Created by kevrat on 09.10.2016.
  */
-var Login = function () {
-};
-Login.prototype = {
+class Login extends Phaser.State {
     /**
      * Create State
      */
-    create: function () {
+    create() {
         this.createIcons();
-    },
+    }
 
     /**
      * Create login icons
      */
-    createIcons: function () {
+    createIcons() {
         let btnLogInVK = game.add.responsiveButton(0, 0,
             'main-vk', () => {
                 this.logIn('vk');
@@ -22,13 +20,13 @@ Login.prototype = {
         );
         btnLogInVK.anchor.set(0.5)
         btnLogInVK.setPinned(Fabrique.PinnedPosition.middleCenter)
-    },
+    }
 
     /**
      * Login via selected service
      * @param serviceName
      */
-    logIn: function (serviceName) {
+    logIn(serviceName) {
         console.log('Try to sign via ' + serviceName);
         switch (serviceName) {
             case 'vk': {
@@ -59,5 +57,5 @@ Login.prototype = {
             }
                 break;
         }
-    },
+    }
 }

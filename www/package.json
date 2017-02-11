@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "phaser-responsive": "^1.3.3"
+    "phaser-responsive": "^1.3.3",
+    "react-phaser": "^0.1.6"
   },
   "devDependencies": {
     "minami": "^1.1.1"

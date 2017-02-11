@@ -1,24 +1,22 @@
 /**
  * Created by kevrat on 08.10.2016.
  */
-var SelectLevel = function () {
-};
-SelectLevel.prototype = {
+class SelectLevel extends Phaser.State {
     /**
      * Create State
      */
-    create: function () {
+    create() {
         this.createSignals();
         this.bg = this.createBg();
         this.createHills()
         this.game.createBtnBack('MainMenu')
-    },
+    }
 
     /**
      * Create and return background
      * @returns {Phaser.TileSprite}
      */
-    createBg: function () {
+    createBg() {
         let bg = game.add.tileSprite(0, game.height * 0.6, game.width, this.game.cache.getFrame('main-header').height, 'main-header');
 
         bg.inputEnabled = true;
@@ -29,12 +27,12 @@ SelectLevel.prototype = {
         }, this);
 
         return bg;
-    },
+    }
 
     /**
      * Update camera
      */
-    updateCamera: function () {
+    updateCamera() {
         if (this.game.input.activePointer.isDown) {
             if (this.game.origDragPoint) {
                 if (this.bg.isCanDrag) {
@@ -63,12 +61,12 @@ SelectLevel.prototype = {
             this.game.origDragPoint = null;
         }
 
-    },
+    }
 
     /**
      * Create hills
      */
-    createHills: function () {
+    createHills() {
         this.hills = game.add.group()
         let hillsJSON = game.cache.getJSON('hills');
         for (let i = 0; i < hillsJSON.length; i++) {
@@ -97,7 +95,7 @@ SelectLevel.prototype = {
             hill.x += hill.width * 1.5 * i
             this.hills.add(hill)
             let btnSelectHill = game.add.button(0, hill.bottom, 'main-play')
-            if (doneTiles < hillsJSON[i].items.length && this.game.userController.userInStorage.level >= i-1) {
+            if (doneTiles < hillsJSON[i].items.length && this.game.userController.userInStorage.level >= i - 1) {
                 btnSelectHill.onInputDown.add(() => this.signals.startLevel.dispatch(hillsJSON[i]), this);
             }
             else {
@@ -114,25 +112,24 @@ SelectLevel.prototype = {
 
         }
 
-    },
+    }
 
     /**
      * Create hills
      */
-    createSignals: function () {
+    createSignals() {
         this.signals = {}
         this.signals.startLevel = new Phaser.Signal();
         this.signals.startLevel.add(function (hill) {
             this.game.state.start('Game', true, false, hill)
         }, this);
-    },
+    }
 
     /**
      * Update state
      */
-    update: function () {
+    update() {
         this.updateCamera();
-    },
+    }
 
-
-};
+}

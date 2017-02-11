@@ -21,6 +21,8 @@ game.createHeader = function (y) {
     headerGroup.add(headerTail)
     headerGroup.setPinned(Fabrique.PinnedPosition.topLeft, 0, y)
     game.add.tween(headerGroup).from({y: -header.height}, 500, Phaser.Easing.Back.Out, true)//.onComplete.add(callback)
+    let btn1 = new game.Btn(this, 100, 100, 'main-menu')
+    headerGroup.add(btn1)
     return headerGroup;
 
 };
@@ -62,14 +64,18 @@ game.createBtnBack = function (stateName) {
     btnBackToMenu.anchor.set(0, 1)
     return btnBackToMenu
 };
-
-var MainMenu = function () {
-};
-MainMenu.prototype = {
+class Btn extends Fabrique.ResponsiveButton{
+    constructor(game, x, y, icon) {
+        super(game, x, y, icon)
+        this.setPortraitScaling(10, true, true, Fabrique.PinnedPosition.topCenter)
+    }
+}
+game.Btn = Btn
+class MainMenu extends Phaser.State {
     /**
      * Create State
      */
-    create: function () {
+    create() {
         this.signals = {}
         this.signals.startInfinityGame = new Phaser.Signal();
         this.signals.startSelectLevel = new Phaser.Signal();
@@ -93,28 +99,29 @@ MainMenu.prototype = {
         this.createBtns();
         this.header = this.game.createHeader(0)
 
-    },
+
+    }
 
     /**
      * Start header expand animation
      * @param callback
      */
-    expandHeader: function (callback) {
+    expandHeader(callback) {
         this.game.add.tween(this.header).to({y: this.game.height}, 500, Phaser.Easing.Back.In, true).onComplete.add(callback)
-    },
+    }
 
     /**
      * Start reset header animation
      * @param callback
      */
-    resetHeader: function (callback) {
+    resetHeader(callback) {
         this.game.add.tween(this.header).to({y: 0}, 500, Phaser.Easing.Back.In, true).onComplete.add(callback)
-    },
+    }
 
     /**
      * Create buttons
      */
-    createBtns: function () {
+    createBtns() {
         let btnSelectLevel = game.createBtnLabel('Гора сладостей', 'main-button',
             Fabrique.PinnedPosition.middleCenter,
             () => {
@@ -137,27 +144,27 @@ MainMenu.prototype = {
         this.mainButtons.add(btnInfinityGame)
         this.mainButtons.add(btnShowRecordBoard)
 
-    },
+    }
 
     /**
      * Create background
      */
-    createBg: function () {
+    createBg() {
         let bg = this.game.add.responsiveSprite(0, 0, 'main-bg', null, Fabrique.PinnedPosition.middleCenter);
         bg.anchor.set(0.5)
         bg.setPortraitScaling(100, true, true, Fabrique.PinnedPosition.middleCenter);
-    },
+    }
 
     /**
      * Create board of records
      */
-    createRecordBoard: function () {
+    createRecordBoard() {
 
         if (game.server.connected) {
 
             this.mainButtons.setAll('inputEnabled', false);
             this.game.server.messages.getRecords((records) => {
-                if(records){
+                if (records) {
                     let recordsGroup = game.add.responsiveGroup()
                     let prevRecord
                     for (let i = 0; 10 < records.length ? i < 10 : i < records.length; i++) {
@@ -180,4 +187,4 @@ MainMenu.prototype = {
         this.game.createBtnBack('MainMenu')
 
     }
-};
+}

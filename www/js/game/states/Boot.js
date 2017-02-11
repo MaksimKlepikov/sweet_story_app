@@ -1,22 +1,20 @@
 /**
  * Created by kevrat on 08.10.2016.
  */
-var Boot = function (game) {
-};
-Boot.prototype = {
+class Boot extends Phaser.State {
     /**
      * Preload State
      */
-    preload: function () {
+    preload() {
         game.plugins.add(Fabrique.Plugins.Responsiveness);
         this.loadScripts();
         this.loadJSONs()
-    },
+    }
 
     /**
      * Create State
      */
-    create: function () {
+    create() {
         game.input.touch.preventDefault = false;
         this.addGameStates();
         this.scaleStage();
@@ -28,35 +26,35 @@ Boot.prototype = {
         }
 
         game.state.start('Preload');
-    },
+    }
 
     /**
      * Add loaded states to game
      */
-    addGameStates: function () {
+    addGameStates() {
         game.state.add('MainMenu', MainMenu);
         game.state.add('Login', Login);
         game.state.add('SelectLevel', SelectLevel);
         game.state.add('Preload', Preload);
         game.state.add('InfinityGame', InfinityGame);
         game.state.add('Game', Game);
-    },
+    }
 
     /**
      * Load scripts
      */
-    loadScripts: function () {
+    loadScripts() {
         game.load.script('Server', 'js/game/Server.js');
         game.load.script('GameField', 'js/game/GameField.js');
         game.load.script('UserController', 'js/game/controllers/UserController.js');
         game.load.script('UserModel', 'js/game/models/UserModel.js');
         this.loadStatesScripts()
-    },
+    }
 
     /**
      * Load states scripts
      */
-    loadStatesScripts: function () {
+    loadStatesScripts() {
         let statesScripts = [
             {name: 'MainMenu', uri: 'js/game/states/MainMenu.js'},
             {name: 'Preload', uri: 'js/game/states/Preload.js'},
@@ -68,19 +66,19 @@ Boot.prototype = {
         for (let i = 0; i < statesScripts.length; i++) {
             game.load.script(statesScripts[i].name, statesScripts[i].uri);
         }
-    },
+    }
 
     /**
      * Load JSON files
      */
-    loadJSONs: function () {
+    loadJSONs() {
         game.load.json('hills', 'hills/hills.json');
-    },
+    }
 
     /**
      * Scale game
      */
-    scaleStage: function () {
+    scaleStage() {
         if (this.game.device.desktop) {
         }
         else {
@@ -108,9 +106,8 @@ Boot.prototype = {
             BasicGame.viewWidth = BasicGame.gameWidth;
             BasicGame.viewHeight = BasicGame.gameHeight;
         }
-    },
-
-};
+    }
+}
 var BasicGame = {};
 BasicGame.screen = "small";
 BasicGame.srx = Math.max(window.innerWidth, window.innerHeight);
@@ -151,12 +148,12 @@ BasicGame.convertHeight = function (value) {
     return value / BasicGame.logicHeight * BasicGame.gameHeight;
 };
 
-var game = new Phaser.Game('100%', '100%', Phaser.AUTO, 'sweetstory', null, true);
-game.user = {};
-if (game.device.desktop) {
-    BasicGame.screen = "large";
-    BasicGame.gameWidth = 720;
-}
-BasicGame.gameHeight = BasicGame.gameWidth / r;
-game.width = BasicGame.gameWidth
-game.height = BasicGame.gameHeight
+// var game = new Phaser.Game('100%', '100%', Phaser.AUTO, 'sweetstory', null, true);
+// game.user = {};
+// if (game.device.desktop) {
+//     BasicGame.screen = "large";
+//     BasicGame.gameWidth = 720;
+// }
+// BasicGame.gameHeight = BasicGame.gameWidth / r;
+// game.width = BasicGame.gameWidth
+// game.height = BasicGame.gameHeight

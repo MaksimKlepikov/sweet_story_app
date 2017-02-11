@@ -1,39 +1,36 @@
 /**
  * Created by kevrat on 24.12.2016.
  */
-
-var Game = function () {
-};
-Game.prototype = {
+class Game extends Phaser.State {
     /**
      * Init State
      * @param hill - current level
      */
-    init: function (hill) {
+    init(hill) {
         this.currentLevel = hill
-    },
+    }
 
     /**
      * Create State
      */
-    create: function () {
+    create() {
         this.createSignals()
         this.game.createBtnBack('SelectLevel')
         this.gameField = new GameField('sweetHill', this.currentLevel, game, this.game.width / 10, 0, this.game.width * 0.9, this.game.width * 0.9, 6, 6)
         this.createProgressWidget()
-    },
+    }
 
     /**
      * Update State
      */
-    update: function () {
+    update() {
         this.gameField.update();
-    },
+    }
 
     /**
      * Create signals
      */
-    createSignals: function () {
+    createSignals() {
         this.game.signals = {}
         this.signals = {}
         this.game.signals.isProgress = new Phaser.Signal();
@@ -42,7 +39,7 @@ Game.prototype = {
             this.game.add.tween(btnAccept).to({y: -btnAccept.height}, 1000, Phaser.Easing.Back.In, true)
                 .onComplete.add(() => this.game.state.start('SelectLevel'))
         }, this);
-    },
+    }
 
     /**
      * Create award window
@@ -54,12 +51,12 @@ Game.prototype = {
                 this.signals.startSelectLevel.dispatch(btnAccept)
             }, 90)
         this.game.add.tween(btnAccept).to({y: this.game.height - btnAccept.height}, 1000, Phaser.Easing.Back.Out, true)//.onComplete.add(callback)
-    },
+    }
 
     /**
      * Create progress widget
      */
-    createProgressWidget: function () {
+    createProgressWidget() {
         let progressBar = game.add.responsiveGroup()
 
         let bgAllProgress = this.game.add.bitmapData(10, game.height);
@@ -114,7 +111,5 @@ Game.prototype = {
             }
         }, this);
 
-    },
-
-
-};
+    }
+}
