@@ -16,20 +16,66 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var app = {
-    // Application Constructor
-    initialize: function() {
-        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-    },
-    onDeviceReady: function() {
-        this.receivedEvent('deviceready');
-        game.state.add('Boot', Boot);
-        game.state.start('Boot');
-    },
-    receivedEvent: function(id) {
+import {Boot, Device} from './game/states/Boot'
+// var app = {
+//     // Application Constructor
+//     initialize: function () {
+//         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+//     },
+//     onDeviceReady: function () {
+//         this.receivedEvent('deviceready');
+//
+//         class Game extends Phaser.Game {
+//
+//             constructor() {
+//                 super('100%', '100%', Phaser.WEBGL, 'sweetstory', null, true, false);
+//                 this.state.add('Boot', Boot, false);
+//                 this.state.start('Boot');
+//                 this.user = {};
+//                 // if (this.device.desktop) {
+//                 //     BasicGame.screen = "large";
+//                 //     BasicGame.gameWidth = 720;
+//                 // }
+//                 // BasicGame.gameHeight = BasicGame.gameWidth / r;
+//                 // this.width = BasicGame.gameWidth
+//                 // this.height = BasicGame.gameHeight
+//             }
+//
+//         }
+//         var game = new Game();
+//         // game.state.add('Boot', Boot);
+//         // game.state.start('Boot');
+//     },
+//     receivedEvent: function (id) {
+//
+//         console.log('Received Event: ' + id);
+//     }
+// };
+class Game extends Phaser.Game {
 
-        console.log('Received Event: ' + id);
+    constructor() {
+        super('100%', '100%', Phaser.CANVAS, 'sweetstory', null, true);
+        this.state.add('Boot', Boot, false);
+        this.state.start('Boot');
+        this.user = {};
+        // if (this.device.desktop) {
+        //     BasicGame.screen = "large";
+        //     BasicGame.gameWidth = 720;
+        // }
+        // BasicGame.gameHeight = BasicGame.gameWidth / r;
+        // this.width = BasicGame.gameWidth
+        // this.height = BasicGame.gameHeight
+        if (window.cordova) {
+            document.addEventListener('deviceready', () => {
+                this.state.start('Boot');
+            }, false);
+        } else {
+            this.state.start('Boot');
+        }
     }
-};
 
-app.initialize();
+}
+var game = new Game();
+
+
+// app.initialize();

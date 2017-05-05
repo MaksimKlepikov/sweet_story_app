@@ -32,6 +32,7 @@
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
         <link rel="stylesheet" type="text/css" href="css/index.css">
         <title>Hello World</title>
     </head>
@@ -41,9 +42,10 @@
         <script type="text/javascript" src="http://sweetstory.herokuapp.com/socket.io/socket.io.js"></script>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/lib/phaser.js"></script>
-        <script type="text/javascript" src="node_modules/phaser-responsive/build/phaser-responsive.js"></script>
+        <script src="node_modules/localforage/dist/localforage.js"></script>
+        <!--<script type="text/javascript" src="node_modules/phaser-responsive/build/phaser-responsive.js"></script>-->
 
-        <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript" src="js/game/states/Boot.js"></script>
+        <script type="text/javascript" src="build/bundle.js"></script>
+        <!--<script type="text/javascript" src="js/game/states/Boot.js"></script>-->
     </body>
 </html>

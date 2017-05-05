@@ -1,7 +1,7 @@
 /**
  * Created by kevrat on 26.12.2016.
  */
-class UserController {
+export default class UserController {
     /**
      *
      * constructor
@@ -31,23 +31,30 @@ class UserController {
      * increment user level and sync it with server
      */
     incrementLevel() {
-        let user = JSON.parse(this._model._storage.getItem('user'))
-        user.level += 1
-        this._model._storage.setItem('user', JSON.stringify(user));
-        if (this.game.server.connected) {
-            this.game.server.messages.updateLevel(this.userInStorage.level, (updateDate, err) => {
-                if (err) {
-                    return console.log(err)
-                }
-                this.updateDateInStorage(updateDate)
+        return this.userInStorage
+            .then((userInStorage) => {
+                userInStorage.level += 1;
 
-                this.user.updateDate = updateDate
+                return this.updateUserInStorage(userInStorage)
             })
-        }
-        else {
-            this.updateDateInStorage(new Date(Date.now()).toISOString())
-            this.syncUser()
-        }
+            .then(() => {
+                if (this.game.server.connected) {
+
+                    return this.userInStorage
+                        .then(userInStorage => this.game.server.messages.updateLevel(userInStorage.level))
+                        .then((updateDate, err) => {
+                            if (err) throw err;
+                            return this.updateDateInStorage(updateDate);
+                        })
+                        .then(() => this.syncUser())
+                }
+                else {
+
+                    return this.updateDateInStorage(new Date(Date.now()).toISOString())
+                        .then(() => this.syncUser)
+                }
+            })
+            .catch(err => console.error(err))
     }
 
     /**
@@ -69,24 +76,51 @@ class UserController {
      * @param {string} hillName
      */
     doneTile(hillName) {
-        this.incrementProgressOnHill(hillName)
-        this.userInStorage = this.user
-        if (this.game.server.connected) {
-            this.game.server.messages.updateProgress(this.userInStorage.progress, (updateDate, err) => {
-                if (err) {
-                    return console.log(err)
+        return this.incrementProgressOnHill(hillName)
+        // return this.updateUserInStorage(this.user)
+        //     .then(() => this.userInStorage)
+        //     .then(userInStorage => {
+        //         if (this.game.server.connected) {
+        //             return this.game.server.messages.updateProgress(userInStorage.progress)
+        //                 .then((updateDate, err) => {
+        //
+        //                     if (err) throw err;
+        //                     return this.updateDateInStorage(updateDate)
+        //                 })
+        //                 .then(() => this.syncUser)
+        //                 .catch(err => console.error(err))
+        //         }
+        //         else {
+        //
+        //             return this.updateDateInStorage(new Date(Date.now()).toISOString())
+        //                 .then(() => this.syncUser)
+        //         }
+        //     })
+        //     .then(() => {
+        //         this.game.signals.isProgress.dispatch(hillName, this.getProgressByHillName(hillName).done)
+        //     })
+    }
+
+    updateProgress(progress = this.user.progress) {
+        return this.updateProgressInStorage(progress)
+            .then(() => this.userInStorage)
+            .then(userInStorage => {
+                if (this.game.server.connected) {
+                    return this.game.server.messages.updateProgress(userInStorage.progress)
+                        .then((updateDate, err) => {
+
+                            if (err) throw err;
+                            return this.updateDateInStorage(updateDate)
+                        })
+                        .then(() => this.syncUser)
+                        .catch(err => console.error(err))
                 }
-                this.updateDateInStorage(updateDate)
+                else {
 
-                this.user.updateDate = updateDate
+                    return this.updateDateInStorage(new Date(Date.now()).toISOString())
+                        .then(() => this.syncUser)
+                }
             })
-
-        }
-        else {
-            this.updateDateInStorage(new Date(Date.now()).toISOString())
-            this.syncUser()
-        }
-        this.game.signals.isProgress.dispatch(hillName, this.getProgressByHillName(hillName).done)
     }
 
     /**
@@ -94,9 +128,10 @@ class UserController {
      * @param progress - new progress
      */
     updateProgressInStorage(progress) {
-        let user = JSON.parse(this._model._storage.getItem('user'))
-        user.progress = progress
-        this._model._storage.setItem('user', JSON.stringify(user));
+        return this.userInStorage.then((user) => {
+            user.progress = progress;
+            return this.updateUserInStorage(user);
+        })
     }
 
     /**
@@ -104,9 +139,11 @@ class UserController {
      * @param updateDate - new update date
      */
     updateDateInStorage(updateDate) {
-        let user = JSON.parse(this._model._storage.getItem('user'))
-        user.updateDate = updateDate
-        this._model._storage.setItem('user', JSON.stringify(user));
+        return this._model._storage.getItem('user').then((user) => {
+
+            user.updateDate = updateDate;
+            return this.updateUserInStorage(user, false)
+        })
     }
 
     /**
@@ -114,30 +151,30 @@ class UserController {
      * @param {number} bestScore - new record
      */
     updateBestScoreInStorage(bestScore) {
-        let user = JSON.parse(this._model._storage.getItem('user'))
-        user.bestScore = bestScore
-        this._model._storage.setItem('user', JSON.stringify(user));
-        if (this.game.server.connected) {
-            this.game.server.messages.updateBestScore(this.userInStorage.bestScore, (updateDate, err) => {
-                if (err) {
-                    return console.log(err)
-                }
-                this.updateDateInStorage(updateDate)
-
-                this.user.updateDate = updateDate
+        this.userInStorage
+            .then((user) => {
+                user.bestScore = bestScore;
+                return this.updateUserInStorage(user);
             })
-        }
-        else {
-            this.updateDateInStorage(new Date(Date.now()).toISOString())
-            this.syncUser()
-        }
+            .then(() => {
+                if (this.game.server.connected) {
+
+                    return this.userInStorage
+                        .then((userInStorage) => this.game.server.messages.updateBestScore(userInStorage.bestScore))
+                        .then((updateDate, err) => {
+                            if (err) throw new Error(err)
+                            this.updateDateInStorage(updateDate)
+                        });
+                }
+            })
+            .catch(err => console.error(err))
     }
 
     /**
      * sync read in ram user from storage
      */
     syncUser() {
-        this.user = this.userInStorage
+        return this.userInStorage.then(userInStorage => this.user = userInStorage)
     }
 
     /**
@@ -153,7 +190,8 @@ class UserController {
      * @param {user} value - new user profile
      */
     set userInStorage(value) {
-        this._model.storageData = value;
+
+        return this._model.storageData = value;
     }
 
     /**
@@ -161,6 +199,12 @@ class UserController {
      */
     get user() {
         return this._model.data
+    }
+
+    updateUserInStorage(user, isUpdateDate = true) {
+        if (isUpdateDate)
+            user.updateDate = new Date(Date.now()).toISOString()
+        return this._model._storage.setItem('user', user);
     }
 
     //noinspection JSAnnotator

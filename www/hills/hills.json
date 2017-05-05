@@ -6,7 +6,11 @@
       {"name":"cake1","angle":30,"pos":{"angle":50,"dist":0.8}},
       {"name":"donut1","angle":0,"pos":{"angle":120,"dist":0.5}},
       {"name":"cake2","angle":20,"pos":{"angle":90,"dist":0.8}}
-    ]
+    ],
+    "moves":6,
+    "bronzeItem":1,
+    "silverItem":2,
+    "goldItem":4
   },
   {
     "name":"Гора 2",
@@ -17,7 +21,11 @@
       {"name":"cake2","angle":0,"pos":{"angle":100,"dist":0.5}},
       {"name":"cake1","angle":-30,"pos":{"angle":60,"dist":0.2}},
       {"name":"donut1","angle":0,"pos":{"angle":90,"dist":0.5}}
-    ]
+    ],
+    "moves":8,
+    "bronzeItem":2,
+    "silverItem":4,
+    "goldItem":6
   },
   {
     "name":"Гора 3",
@@ -29,7 +37,11 @@
       {"name":"cake1","angle":-30,"pos":{"angle":60,"dist":0.2}},
       {"name":"cake1","angle":30,"pos":{"angle":100,"dist":0.5}},
       {"name":"lolipop1","angle":0,"pos":{"angle":100,"dist":0.5}}
-    ]
+    ],
+    "moves":9,
+    "bronzeItem":4,
+    "silverItem":5,
+    "goldItem":7
   },
   {
     "name":"Гора 4",
@@ -44,7 +56,11 @@
       {"name":"donut1","angle":0,"pos":{"angle":90,"dist":0.5}},
       {"name":"lolipop2","angle":-30,"pos":{"angle":60,"dist":0.2}},
       {"name":"cake1","angle":30,"pos":{"angle":100,"dist":0.5}}
-    ]
+    ],
+    "moves":12,
+    "bronzeItem":6,
+    "silverItem":8,
+    "goldItem":10
   },
   {
     "name":"Гора 5",
@@ -61,6 +77,10 @@
       {"name":"cake1","angle":30,"pos":{"angle":100,"dist":0.5}},
       {"name":"lolipop1","angle":0,"pos":{"angle":100,"dist":0.5}},
       {"name":"icecream1","angle":30,"pos":{"angle":100,"dist":0.5}}
-    ]
+    ],
+    "moves":14,
+    "bronzeItem":8,
+    "silverItem":10,
+    "goldItem":12
   }
 ]
