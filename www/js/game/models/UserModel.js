@@ -1,12 +1,17 @@
 /**
  * Created by kevrat on 26.12.2016.
  */
-class UserModel{
+export default class UserModel{
     /**
      * constructor
      * @param storage - ref to localStorage
      */
     constructor(storage){
+        storage.config({
+            name        : 'sweet_story',
+            version     : 1.0,
+            description : 'user information'
+        });
         this._storage = storage
         this._data = null;
         this.data = this.storageData
@@ -35,15 +40,14 @@ class UserModel{
      * @return {user} value from ram memory
      */
     get storageData() {
-        return JSON.parse(this._storage.getItem('user'));
+        return this._storage.getItem('user');
     }
 
-    //noinspection JSAnnotator
     /**
      * Set the user in storage
      * @param {user} value - user profile
      */
     set storageData(value) {
-        this._storage.setItem('user', JSON.stringify(value));
+        return this._storage.setItem('user', value);
     }
 }

@@ -1,77 +1,20 @@
 /**
- * Create and return header
- * @param y - y coord on screen
- * @return {Fabrique.ResponsiveGroup}
- */
-
-
-game.createHeader = function (y) {
-    let headerGroup = game.add.responsiveGroup()
-
-    let header = game.add.responsiveSprite(0, 0, 'main-header', null, Fabrique.PinnedPosition.topCenter);
-    header.anchor.set(0.5, 0)
-    header.setPortraitScaling(200, true, true, Fabrique.PinnedPosition.topCenter);
-
-    let headerTail = game.add.graphics(0, 0);
-    headerTail.beginFill(0xFEAA98);
-    headerTail.drawRect(0, -game.height + headerTail.height, game.width, game.height);
-    headerTail.endFill();
-
-    headerGroup.add(header)
-    headerGroup.add(headerTail)
-    headerGroup.setPinned(Fabrique.PinnedPosition.topLeft, 0, y)
-    game.add.tween(headerGroup).from({y: -header.height}, 500, Phaser.Easing.Back.Out, true)//.onComplete.add(callback)
-    let btn1 = new game.Btn(this, 100, 100, 'main-menu')
-    headerGroup.add(btn1)
-    return headerGroup;
-
-};
-
-/**
- * Create and return button with text
- * @param text - text on button
- * @param key - key of button image
- * @param pin - pin on screen
- * @param callback - callback function
- * @param percentageSprite - size in percentage of button image relative screen
- * @param percentageText - size text in percentage relative button
- * @param x - x coord on screen
- * @param y - y coord on screen
- * @returns {Fabrique.ResponsiveGroup} - array of button and text
- */
-game.createBtnLabel = function (text, key, pin, callback, percentageSprite, percentageText = 100, x = 0, y = 0) {
-    let btnGroup = game.add.responsiveGroup();
-    let btnSprite = game.add.responsiveButton(0, 0, key, callback, this)
-    btnSprite.anchor.set(0.5)
-    let style = {font: btnSprite.height / 2 + "px VAG World", fill: "#8a5746", align: 'center'};
-    let btnLabel = game.add.responsiveText(0, 0, text, style)
-    btnLabel.setPortraitScaling(percentageText, true, false)
-    btnLabel.anchor.set(0.5)
-    btnGroup.add(btnSprite)
-    btnGroup.add(btnLabel)
-    btnGroup.setPortraitScaling(percentageSprite, true, false, pin, x, y)
-    return btnGroup
-};
-
-/**
  * Create and return button, what start state
  * @param stateName - name of start state
  * @returns {Fabrique.ResponsiveButton} - button
  */
-game.createBtnBack = function (stateName) {
-    let btnBackToMenu = game.add.responsiveButton(0, 0, 'main-menu', () => game.state.start(stateName), this)
-    btnBackToMenu.setPortraitScaling(10, true, true, Fabrique.PinnedPosition.bottomLeft)
-    btnBackToMenu.anchor.set(0, 1)
-    return btnBackToMenu
-};
-class Btn extends Fabrique.ResponsiveButton{
-    constructor(game, x, y, icon) {
-        super(game, x, y, icon)
-        this.setPortraitScaling(10, true, true, Fabrique.PinnedPosition.topCenter)
-    }
-}
-game.Btn = Btn
-class MainMenu extends Phaser.State {
+// game.createBtnBack = function (stateName) {
+//     let btnBackToMenu = game.add.responsiveButton(0, 0, 'main-menu', () => game.state.start(stateName), this)
+//     btnBackToMenu.setPortraitScaling(10, true, true, Fabrique.PinnedPosition.bottomLeft)
+//     btnBackToMenu.anchor.set(0, 1)
+//     return btnBackToMenu
+// };
+// game.Btn = Btn
+
+import ButtonLabel from '../gui/ButtonLabel'
+import Header from '../gui/Header';
+
+export default class MainMenu extends Phaser.State {
     /**
      * Create State
      */
@@ -82,22 +25,36 @@ class MainMenu extends Phaser.State {
         this.signals.showRecordBoard = new Phaser.Signal();
         this.signals.startSelectLevel.add(() => {
             this.expandHeader(() => {
-                game.state.start('SelectLevel')
+                this.game.state.start('SelectLevel')
             })
         });
         this.signals.showRecordBoard.add(() => {
             this.expandHeader(() => {
-                this.createRecordBoard()
+                this.resetHeader(() => console.log(2));
+                // this.createRecordBoard()
             })
         });
         this.signals.startInfinityGame.add(() => {
             this.expandHeader(() => {
-                game.state.start('InfinityGame')
+                this.game.state.start('InfinityGame')
             })
         });
-        this.createBg();
+        this.gui = {};
         this.createBtns();
-        this.header = this.game.createHeader(0)
+        this.gui.header = new Header(this.game, 0, -this.game.height * 0.5, 'main-header');
+        this.game.add.existing(this.gui.header);
+        this.gui.header.inputEnabled = true;
+        this.game.add.tween(this.gui.header).from({y: this.game.height * 1.5}, 250, Phaser.Easing.Sinusoidal.In, true)
+            .onComplete.addOnce(_ => this.game.add.tween(this.gui.header).to({y: 0}, 250, Phaser.Easing.Back.Out, true)
+            .onComplete.addOnce(_ => this.game.add.tween(this.gui.header).to({y: -this.gui.header.getBounds().height*0.2}, 2000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true)))
+        this.gui.header.events.onInputUp.add((header, pointer, isOver) => {
+            if (isOver) {
+                this.game.add.tween(this.gui.header)
+                    .to({y: -this.game.height * 0.5}, 250, Phaser.Easing.Sinusoidal.In, true)
+                    .onComplete.addOnce(_ => this.game.add.tween(this.gui.header).to({y: 0}, 250, Phaser.Easing.Back.Out, true))
+            }
+        });
+        this.game.add.tween(this.gui.header.tilePosition).to({x: this.gui.header.width}, 10000, null, true, 0, -1)
 
 
     }
@@ -107,7 +64,7 @@ class MainMenu extends Phaser.State {
      * @param callback
      */
     expandHeader(callback) {
-        this.game.add.tween(this.header).to({y: this.game.height}, 500, Phaser.Easing.Back.In, true).onComplete.add(callback)
+        this.gui.header.expand().onComplete.add(callback)
     }
 
     /**
@@ -115,44 +72,44 @@ class MainMenu extends Phaser.State {
      * @param callback
      */
     resetHeader(callback) {
-        this.game.add.tween(this.header).to({y: 0}, 500, Phaser.Easing.Back.In, true).onComplete.add(callback)
+        this.gui.header.reset().onComplete.add(callback)
     }
 
     /**
      * Create buttons
      */
     createBtns() {
-        let btnSelectLevel = game.createBtnLabel('Гора сладостей', 'main-button',
-            Fabrique.PinnedPosition.middleCenter,
-            () => {
-                this.signals.startSelectLevel.dispatch()
-            }, 70)
+        let bg = this.game.add.sprite(0, 0, 'main-bg');
+        bg.width = this.game.width
+        bg.scale.y = bg.scale.x;
 
-        let btnInfinityGame = game.createBtnLabel('Игра на рекорд', 'main-button',
-            Fabrique.PinnedPosition.middleCenter,
-            () => {
-                this.signals.startInfinityGame.dispatch()
-            }, 70, 100, 0, btnSelectLevel.height * 3)
+        let btnSelectLevel = new ButtonLabel(
+            this.game, 0, 0, 'assets', 'btn-main-play', '', () => this.signals.startSelectLevel.dispatch(),
+            // {width:0.8, maxWidth:250, leftPadding: 0.4, bottomPadding: 0.1}
+        )
 
-        let btnShowRecordBoard = game.createBtnLabel('Рекорды', 'main-button',
-            Fabrique.PinnedPosition.middleCenter,
-            () => {
-                this.signals.showRecordBoard.dispatch()
-            }, 70, 70, 0, btnSelectLevel.height * 6)
-        this.mainButtons = game.add.responsiveGroup()
-        this.mainButtons.add(btnSelectLevel)
-        this.mainButtons.add(btnInfinityGame)
-        this.mainButtons.add(btnShowRecordBoard)
+        let btnInfinityGame = new ButtonLabel(
+            this.game, 0, 0, 'assets', 'btn-main-record', '', () => this.signals.startInfinityGame.dispatch(),
+            // {width:0.8, maxWidth:250, leftPadding: 0.4, bottomPadding: 0.1}
+        )
 
+        // let btnShowRecordBoard = new ButtonLabel(
+        //     this.game, 0, 0, 'assets', 'btn-main', 'Лидеры', () => this.signals.showRecordBoard.dispatch(),
+        //     // {width:0.8, maxWidth:250, leftPadding: 0.4, bottomPadding: 0.1}
+        // )
+
+        this.gui.buttons = this.game.add.group();
+        this.gui.buttons.addMultiple([btnSelectLevel, btnInfinityGame])
+        this.gui.buttons.align(1, this.gui.buttons.children.length, btnSelectLevel.width, btnSelectLevel.height * 1.1);
+        this.gui.buttons.alignIn(this.game.camera.bounds, Phaser.BOTTOM_CENTER, 0, -btnSelectLevel.height * 0.5)
+
+        this.gui.buttons.forEach(btn => btn.activateInputsTweens());
     }
 
     /**
      * Create background
      */
     createBg() {
-        let bg = this.game.add.responsiveSprite(0, 0, 'main-bg', null, Fabrique.PinnedPosition.middleCenter);
-        bg.anchor.set(0.5)
-        bg.setPortraitScaling(100, true, true, Fabrique.PinnedPosition.middleCenter);
     }
 
     /**
@@ -160,12 +117,12 @@ class MainMenu extends Phaser.State {
      */
     createRecordBoard() {
 
-        if (game.server.connected) {
+        if (this.game.server.connected) {
 
             this.mainButtons.setAll('inputEnabled', false);
             this.game.server.messages.getRecords((records) => {
                 if (records) {
-                    let recordsGroup = game.add.responsiveGroup()
+                    let recordsGroup = this.game.add.responsiveGroup()
                     let prevRecord
                     for (let i = 0; 10 < records.length ? i < 10 : i < records.length; i++) {
                         let record = this.game.add.responsiveText(prevRecord ? prevRecord.height * i : 0, 0,
@@ -178,13 +135,13 @@ class MainMenu extends Phaser.State {
             })
         }
         else {
-            let errorMsg = game.add.responsiveText(0, 0,
+            let errorMsg = this.game.add.responsiveText(0, 0,
                 'нет соединения'
             );
             errorMsg.anchor.set(0.5, 1)
             errorMsg.setPortraitScaling(50, true, true, Fabrique.PinnedPosition.bottomCenter, 0, 0);
         }
-        this.game.createBtnBack('MainMenu')
+        // this.game.createBtnBack('MainMenu')
 
     }
 }
